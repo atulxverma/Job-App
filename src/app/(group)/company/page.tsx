@@ -5,41 +5,40 @@ import React from 'react'
 export default async function Page() {
 
     const companies = await prismaClient.company.findMany({
-        include : {
-            owner : true
+        include: {
+            owner: true
         }
     })
-  return (
-    <div>
-        {
-            companies.map((comp)=>{
-                return(
-                    <div key={comp.id}>
-                        <h1>{comp.name}</h1>
-                        <p>{comp.description}</p>
-                        <br />
-                        <br />
-                        <br />
-                        <br />
-                        <p>{comp.owner.email}</p>
+    return (
+        <div>
+            {
+                companies.map((comp) => {
+                    return (
+                        <div key={comp.id}>
+                            <h1>{comp.name}</h1>
+                            <p>{comp.description}</p>
+                            <br />
+                            <br />
+                            <br />
+                            <br />
+                            <p>{comp.owner.email}</p>
 
-                        <DeleteCompanyButton id={company.id}/>
+                            <div>
+                                <DeleteCompanyButton id={comp.id} />
 
-                        <div>
-                            {
-                                DeleteCompanyButton.jobs.map((job)=>{
-                                    return (<div key={job.id}>
+                                {comp.jobs?.map((job) => (
+                                    <div key={job.id}>
                                         <h2>{job.title}</h2>
                                         <p>{job.description}</p>
-                                    </div>)
-                                })
-                            }
+                                    </div>
+                                ))}
+
+                            </div>
+
                         </div>
-                        
-                    </div>
-                )
-            })
-        }
-    </div>
-  )
+                    )
+                })
+            }
+        </div>
+    )
 }

@@ -124,11 +124,13 @@ export default function Jobcard({
           </Button>
         </Link>
 
-        <Link href={`/company/${job.company.id}`}>
-          <Text size="2" weight="medium" color="gray">
-            {job?.company?.name}
-          </Text>
-        </Link>
+        {
+          job?.company && <Link href={`/company/${job.company.id}`}>
+            <Text size="2" weight="medium" color="gray">
+              {job?.company?.name}
+            </Text>
+          </Link>
+        }
       </Flex>
     </Card>
   );

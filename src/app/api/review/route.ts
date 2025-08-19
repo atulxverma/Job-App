@@ -1,4 +1,4 @@
-import { getUserFromCookies } from "@/helper";
+import { getUserFromCookies } from "@/lib/helper";
 import prismaClient from "@/services/prisma";
 import { AwardIcon } from "lucide-react";
 import { CommandSucceededEvent } from "mongodb";

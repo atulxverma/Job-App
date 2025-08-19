@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { Jwt } from "jsonwebtoken";
 import prismaClient from "@/services/prisma";
 import { verifyToken } from "@/services/jwt";
+import { NextResponse } from "next/server";
 
 export async function getUserFromCookies() {
   const userCookies = await cookies();
@@ -28,3 +29,10 @@ export async function getUserFromCookies() {
 
   return user;
 }
+function sendCustomResp(success: boolean, message: string) {
+  return NextResponse.json({
+    success,
+    message,
+  });
+}
+

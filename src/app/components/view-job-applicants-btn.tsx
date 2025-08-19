@@ -26,6 +26,13 @@ export default function ViewJobApplicants({ job } : {job : JobWithCompany}) {
     if(user?.company.id !== job.company.id){
         return null;
     }
+    async function  handleDelete(id :String) {
+        try{
+            const resp = await fetch("/api/applicants/" + id , {
+                method : "DELETE"
+            })
+        }
+    }
     return (
         <Dialog.Root>
             <Dialog.Trigger>

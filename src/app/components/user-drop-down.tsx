@@ -124,35 +124,32 @@ export default function UserDropDown({ user }) {
           sideOffset={8}
           align="end"
         >
-         
-          {user?.company && (
-            <>
-              <DropdownMenu.Item className="p-2 hover:bg-gray-100 rounded-md">
-                <Link href="/add-company">Add a new Company</Link>
-              </DropdownMenu.Item>
-              <DropdownMenu.Item className="p-2 hover:bg-gray-100 rounded-md">
-                <Link href={`/company/${user.company.id}`}>View Company</Link>
-              </DropdownMenu.Item>
-            </>
-          )}
-
-        
-          {user?.role === "Admin" && (
-            <DropdownMenu.Item className="p-2 hover:bg-gray-100 rounded-md">
-              <Link href="/add-job">Add a new Job</Link>
-            </DropdownMenu.Item>
-          )}
-
-         
-          {!isLoggedIn && (
-            <DropdownMenu.Item className="p-2 hover:bg-gray-100 rounded-md">
-              <Link href="/login">Login</Link>
-            </DropdownMenu.Item>
-          )}
-
-          
           {isLoggedIn && (
             <>
+              {user?.role === "Admin" && (
+                <>
+                  {!user?.company && (
+                    <DropdownMenu.Item className="p-2 hover:bg-gray-100 rounded-md">
+                      <Link href="/add-company">Add Company</Link>
+                    </DropdownMenu.Item>
+                  )}
+
+                  {user?.company && (
+                    <DropdownMenu.Item className="p-2 hover:bg-gray-100 rounded-md">
+                      <Link href={`/company/${user.company.id}`}>View Company</Link>
+                    </DropdownMenu.Item>
+                  )}
+                </>
+              )}
+
+              <DropdownMenu.Item className="p-2 hover:bg-gray-100 rounded-md">
+                <Link href="/add-job">Add a new Job</Link>
+              </DropdownMenu.Item>
+
+              <DropdownMenu.Item className="p-2 hover:bg-gray-100 rounded-md">
+                <Link href="/applied-jobs">Your job applications</Link>
+              </DropdownMenu.Item>
+
               <DropdownMenu.Separator className="my-1 border-t border-gray-200" />
 
               <DropdownMenu.Item
@@ -167,8 +164,16 @@ export default function UserDropDown({ user }) {
               </DropdownMenu.Item>
             </>
           )}
+
+          {!isLoggedIn && (
+            <DropdownMenu.Item className="p-2 hover:bg-gray-100 rounded-md">
+              <Link href="/login">Login</Link>
+            </DropdownMenu.Item>
+          )}
         </DropdownMenu.Content>
       </DropdownMenu.Portal>
     </DropdownMenu.Root>
   );
 }
+
+

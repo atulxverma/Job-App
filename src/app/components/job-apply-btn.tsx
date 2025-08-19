@@ -1,26 +1,35 @@
 'use client'
-import { Button } from "@radix-ui/themes"
-import { SendIcon } from "lucide-react"
+import { Button } from "@radix-ui/themes";
+import { SendIcon } from "lucide-react";
 
-export default function JobApplyButton({job}){
-    async function handleSubmit(){
-        try{
-            const res = await fetch("/api/job/apply" + job?.id);
-            const data = await res.json();
+export default function JobApplyButton({ job, setUserHasApplied }) {
+    async function handleSubmit() {
+        try {
+            const res = await fetch(`/api/job/apply/${job?.id}`, { method: "POST" });
 
-            if (data.success){
-                alert("Applied Successfully")
-            } else {
-                alert("Something went wrong")
+            let data = {};
+            try {
+                data = await res.json();
+            } catch {
+                throw new Error("Invalid JSON response from server");
             }
-        } catch(err){
 
+            if (data.success) {
+                alert("Applied Successfully");
+                setUserHasApplied(true);
+            } else {
+                alert(data.message || "Something went wrong");
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Failed to apply. Please try again.");
         }
     }
-    return(
+
+    return (
         <Button onClick={handleSubmit} size="3">
-        <SendIcon size={16} />
-        Apply
+            <SendIcon size={16} />
+            Apply
         </Button>
-    )
+    );
 }

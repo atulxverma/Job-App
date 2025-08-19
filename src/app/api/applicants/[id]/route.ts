@@ -27,3 +27,20 @@ export async function GET(req , {params}) {
         })
     }
 }
+
+export async function DELETE(req , {params}) {
+    const {id} = await params
+    try{
+        const res = await prismaClient.applications.delete({
+            where: {
+                id :
+            }
+        })
+        return sendCustomResp(true , {message : "Deleted Successfully"})
+    } catch (err) {
+        return NextResponse.json({
+            success : false,
+            message : "Something went wrong" 
+        })
+    }
+}

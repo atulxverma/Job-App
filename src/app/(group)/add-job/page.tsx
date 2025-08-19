@@ -141,154 +141,164 @@
 
 
 
+// @ts-nocheck
 "use client";
-
 import React, { useContext, useState } from "react";
 import { useRouter } from "next/navigation";
 import { UserContext } from "../layout";
+import {
+  Button,
+  Card,
+  Flex,
+  Heading,
+  Select,
+  TextArea,
+  TextField,
+} from "@radix-ui/themes";
 
 export default function AddJobPage() {
+  const router = useRouter();
+  const { user } = useContext(UserContext);
+
   const [jobTitle, setJobTitle] = useState("");
   const [jobType, setJobType] = useState("Full-Time");
+  const [jobCategory, setJobCategory] = useState("On-Site");
   const [jobLocation, setJobLocation] = useState("");
   const [jobDescription, setJobDescription] = useState("");
-  const [companyName, setCompanyName] = useState("");
-  const [companyWebsite, setCompanyWebsite] = useState("");
+  const [jobSalary, setJobSalary] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const router = useRouter();
-  const user = useContext(UserContext);
+  const handleAddJob = async () => {
+    if (
+      !jobTitle ||
+      !jobType ||
+      !jobCategory ||
+      !jobLocation ||
+      !jobDescription ||
+      !jobSalary
+    ) {
+      alert("Please fill all fields");
+      return;
+    }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (!user?.company?.id) {
+      alert("Company not found.");
+      return;
+    }
 
-    const jobData = {
+    const salaryNum = parseInt(jobSalary);
+    if (isNaN(salaryNum)) {
+      alert("Invalid salary");
+      return;
+    }
+
+    const data = {
       title: jobTitle,
-      type: jobType,
-      location: jobLocation,
       description: jobDescription,
-      company: {
-        name: companyName,
-        website: companyWebsite,
-      },
-      userId: user?.id || "",
+      salary: salaryNum,
+      job_type: jobCategory,
+      employment_type: jobType,
+      location: jobLocation,
+      company_id: user.company.id,
     };
 
+    setLoading(true);
     try {
-      const res = await fetch("/api/jobs", {
+      const res = await fetch("http://localhost:3000/api/job", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(jobData),
+        body: JSON.stringify(data),
       });
 
+      const result = await res.json();
       if (res.ok) {
         alert("Job added successfully!");
         router.push("/");
       } else {
-        alert("Failed to add job.");
+        alert(result.message || "Something went wrong");
       }
     } catch (error) {
-      console.error("Error:", error);
-      alert("Something went wrong!");
+      alert("Something went wrong while adding job");
+    } finally {
+      setLoading(false);
     }
   };
-
   return (
-    <div className="max-w-2xl mx-auto mt-12 px-6 py-8 bg-white shadow-lg rounded-xl">
-      <h2 className="text-3xl font-bold mb-8 text-center">Add New Job</h2>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-        <div>
-          <label className="block text-gray-700 font-semibold mb-1">
-            Job Title
-          </label>
-          <input
-            type="text"
-            placeholder="Enter job title"
+    <Card className="max-w-xl mx-auto mt-10 p-6">
+      <Heading as="h1" size="5" mb="5" align="center">
+        Add New Job
+      </Heading>
+
+      <Flex direction="column" gap="4">
+        <label>
+          Job Title
+          <TextField.Root
+            placeholder="e.g. Software Engineer"
             value={jobTitle}
             onChange={(e) => setJobTitle(e.target.value)}
-            className="w-full border border-gray-300 p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-            required
           />
-        </div>
+        </label>
 
-        <div>
-          <label className="block text-gray-700 font-semibold mb-1">
-            Job Type
-          </label>
-          <select
-            value={jobType}
-            onChange={(e) => setJobType(e.target.value)}
-            className="w-full border border-gray-300 p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-          >
-            <option value="Full-Time">Full-Time</option>
-            <option value="Part-Time">Part-Time</option>
-            <option value="Contract">Contract</option>
-          </select>
-        </div>
+        <label>
+          Job Category
+          <Select.Root value={jobCategory} onValueChange={setJobCategory}>
+            <Select.Trigger />
+            <Select.Content>
+              <Select.Item value="On-Site">On-Site</Select.Item>
+              <Select.Item value="Remote">Remote</Select.Item>
+              <Select.Item value="Hybrid">Hybrid</Select.Item>
+            </Select.Content>
+          </Select.Root>
+        </label>
 
-        <div>
-          <label className="block text-gray-700 font-semibold mb-1">
-            Job Location
-          </label>
-          <input
-            type="text"
-            placeholder="Location"
+        <label>
+          Employment Type
+          <Select.Root value={jobType} onValueChange={setJobType}>
+            <Select.Trigger />
+            <Select.Content>
+              <Select.Item value="Full-Time">Full-Time</Select.Item>
+              <Select.Item value="Part-Time">Part-Time</Select.Item>
+              <Select.Item value="Contract">Contract</Select.Item>
+              <Select.Item value="Internship">Internship</Select.Item>
+            </Select.Content>
+          </Select.Root>
+        </label>
+
+        <label>
+          Location
+          <TextField.Root
+            placeholder="e.g. Bengaluru, India"
             value={jobLocation}
             onChange={(e) => setJobLocation(e.target.value)}
-            className="w-full border border-gray-300 p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-            required
           />
-        </div>
+        </label>
 
-        <div>
-          <label className="block text-gray-700 font-semibold mb-1">
-            Job Description
-          </label>
-          <textarea
-            placeholder="Write job description here..."
+        <label>
+          Salary
+          <TextField.Root
+            type="number"
+            placeholder="e.g. 80000"
+            value={jobSalary}
+            onChange={(e) => setJobSalary(e.target.value)}
+          />
+        </label>
+
+        <label>
+          Job Description
+          <TextArea
+            placeholder="Describe the job role and responsibilities"
+            rows={4}
             value={jobDescription}
             onChange={(e) => setJobDescription(e.target.value)}
-            className="w-full border border-gray-300 p-3 rounded-md h-32 resize-none focus:outline-none focus:ring-2 focus:ring-blue-400"
-            required
           />
-        </div>
+        </label>
 
-        <div>
-          <label className="block text-gray-700 font-semibold mb-1">
-            Company Name
-          </label>
-          <input
-            type="text"
-            placeholder="Company name"
-            value={companyName}
-            onChange={(e) => setCompanyName(e.target.value)}
-            className="w-full border border-gray-300 p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-            required
-          />
-        </div>
-
-        <div>
-          <label className="block text-gray-700 font-semibold mb-1">
-            Company Website
-          </label>
-          <input
-            type="url"
-            placeholder="https://example.com"
-            value={companyWebsite}
-            onChange={(e) => setCompanyWebsite(e.target.value)}
-            className="w-full border border-gray-300 p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-            required
-          />
-        </div>
-
-        <button
-          type="submit"
-          className="mt-4 bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition duration-200"
-        >
-          Post Job
-        </button>
-      </form>
-    </div>
+        <Button onClick={handleAddJob} disabled={loading}>
+          {loading ? "Adding..." : "Add Job"}
+        </Button>
+      </Flex>
+    </Card>
   );
 }
