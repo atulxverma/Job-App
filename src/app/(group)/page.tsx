@@ -33,7 +33,7 @@
 
 import prismaClient from "@/services/prisma";
 import Jobcard from "../components/cards/job-card";
-import Header from "../components/header";
+// import Header from "../components/header";
 import Footer from "../components/Footer";
 
 export default async function Home() {

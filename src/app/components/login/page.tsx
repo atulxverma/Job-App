@@ -2,8 +2,9 @@
 
 import React, { useContext, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Card, TextField, Button, Text, Flex, Link } from "@radix-ui/themes";
+import { Card, TextField, Button, Text, Flex } from "@radix-ui/themes";
 import { UserContext } from "@/app/(group)/layout";
+import Link from "next/link";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -78,7 +79,7 @@ export default function LoginPage() {
         <Flex direction="column" align="center" mt="4" gap="2">
           <Text size="2" color="gray">
             Don’t have an account?{" "}
-            <Link href="/register" color="blue">
+            <Link href="/signup" color="blue">
               Register
             </Link>
           </Text>
@@ -97,3 +98,4 @@ export default function LoginPage() {
     </div>
   );
 }
+
